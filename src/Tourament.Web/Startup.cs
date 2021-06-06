@@ -99,7 +99,13 @@ namespace Tourament.Web
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
             app.UseHangfireDashboard(); //Will be available under http://localhost:5000/hangfire"
-            app.UseHangfireServer();
+            var options = new BackgroundJobServerOptions
+            {
+                WorkerCount = 1    //Hangfire's default worker count is 20, which opens 20 connections simultaneously.
+                                   // For this we are overriding the default value.
+            };
+
+            app.UseHangfireServer(options);
 
         }
     }
