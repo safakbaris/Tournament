@@ -30,6 +30,7 @@ namespace Tourament.Web
         {
 
             services.AddMvc();
+            services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
             services.AddAutoMapper(typeof(Startup));
             services.AddSession();
             services.AddHttpContextAccessor();
