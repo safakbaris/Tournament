@@ -2,6 +2,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,10 +32,16 @@ namespace Tourament.Web
 
             services.AddMvc();
             services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
+          
             services.AddAutoMapper(typeof(Startup));
             services.AddSession();
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
             services.AddDbContext<TournamentContext>(options => options.UseNpgsql(Configuration["DefaultConnection"]));
             services.AddHangfire(x => x.UsePostgreSqlStorage(Configuration["DefaultConnection"]));
             services.AddScoped<IUserRepository, UserRepository>();
@@ -68,12 +75,15 @@ namespace Tourament.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseForwardedHeaders();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseForwardedHeaders();
                 app.UseHsts();
+               
             }
             app.UseSession();
             app.UseHttpsRedirection();
