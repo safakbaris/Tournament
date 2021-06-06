@@ -1,0 +1,50 @@
+﻿
+
+@{
+    ViewData["Title"] = "Game Page";
+}
+<link href="~/lib/datatables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<div class="container">
+    <input id="hdnGameId" type="hidden" value="@ViewBag.GameId">
+
+    @if (ViewBag.ErrorMessage == null)
+    {
+
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label class="col-form-label" for="lblNumber">Number</label>
+            </div>
+            <div class="col-auto">
+                <label id="lblNumber">@ViewBag.Number</label>
+            </div>
+
+            <div class="col-auto">
+                <label class="col-form-label" for="txtNumberToSubstract">Number to Substract</label>
+            </div>
+            <div class="col-auto">
+                <input id="txtNumberToSubstract" type="text" />
+            </div>
+            <div class="col-auto">
+                <input id="btnPlay" type="button" class="btn btn-primary" value="Play" onclick="Play()">
+            </div>
+        </div>
+
+
+
+
+
+    }
+    else
+    {
+        @ViewBag.ErrorMessage
+    }
+
+</div>
+
+
+@section Scripts
+{
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/tournamentsDatatable.js"></script>
+}
