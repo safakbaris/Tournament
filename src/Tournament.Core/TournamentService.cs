@@ -34,7 +34,7 @@ namespace Tournament.Core
 
             bool result = await tournamentRepository.Insert(tournament);
             if (result)
-                backgroundJobClient.Schedule(() => ArrangeGames(tournament.Id,baseUrl), tournament.StartTime);
+                backgroundJobClient.Schedule(() => ArrangeGames(tournament.Id,baseUrl), tournament.StartTime.ToUniversalTime());
             return result;
         }
 
@@ -90,8 +90,8 @@ namespace Tournament.Core
                             var gameUrl = $"{baseUrl}/Game/Index/";
                             gameUrl += $"{game.Id}";
                             string body = $"You can join your game from link above. {Environment.NewLine} {gameUrl}";
-                            backgroundJobClient.Schedule(() => SendEmail(game.Player1.Email, gameReadySubject, body), tournament.StartTime);
-                            backgroundJobClient.Schedule(() => SendEmail(game.Player2.Email, gameReadySubject, body), tournament.StartTime);
+                            backgroundJobClient.Schedule(() => SendEmail(game.Player1.Email, gameReadySubject, body), tournament.StartTime.ToUniversalTime());
+                            backgroundJobClient.Schedule(() => SendEmail(game.Player2.Email, gameReadySubject, body), tournament.StartTime.ToUniversalTime());
                         }
                     }
                       
@@ -132,7 +132,7 @@ namespace Tournament.Core
                             result.Success = await tournamentRepository.AddPlayer(dto.TournamentId, dto.PlayerId);
                             if (result.Success)
                             {
-                                backgroundJobClient.Schedule(() => SendEmail(user.Email, "Tournament is starting in 1 hour!", "Check out your email you will get an game url at start time."), tournament.StartTime.AddHours(-1));
+                                backgroundJobClient.Schedule(() => SendEmail(user.Email, "Tournament is starting in 1 hour!", "Check out your email you will get an game url at start time."), tournament.StartTime.AddHours(-1).ToUniversalTime());
                                 result.Message = "Successfully attended to tournament.";
                             }
                         }
